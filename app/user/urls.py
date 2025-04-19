@@ -3,7 +3,6 @@ URL mapping for the user API.
 """
 from typing import List
 from django.urls import path, URLPattern
-from rest_framework_simplejwt.views import TokenRefreshView
 
 from user import views
 

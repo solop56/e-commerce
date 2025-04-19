@@ -122,8 +122,6 @@ class AuthTokenSerializer(serializers.Serializer):
         if user:
             data['user'] = UserSerializer(user).data
         return data
-        
-        full_name = f'{self.first_name} {self.last_name}'
     
     def __str__(self):
         """Return the string representation of the user."""
