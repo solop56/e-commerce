@@ -25,7 +25,7 @@ services:
         condition: service_healthy
 
   db:
-    image: postgres:13-alpine
+    image: postgres:14-alpine
     restart: always
     volumes:
       - dev-db-data:/var/lib/postgresql/data
