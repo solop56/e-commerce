@@ -37,8 +37,20 @@ class UserAdmin(BaseUserAdmin):
     ordering = ['email']
     filter_horizontal = []
     list_per_page = 20
-    def get_queryset(self, request):
-        """Override the queryset to include all users."""
-        return super().get_queryset(request).select_related('user_permissions')
+    
+class PropertyAdmin(admin.ModelAdmin):
+    """Define the admin pages for properties."""
+    list_display = ['name', 'price', 'owner', 'type', 'category']
+    search_fields = ['name', 'owner__username']
+    list_filter = ['type', 'category']
+    ordering = ['-created_at']
+    list_per_page = 20
+    fieldsets = (
+        (None, {'fields': ('name', 'description', 'price', 'owner', 'type', 'category')}),
+        (_('Contact Info'), {'fields': ('contact_number', 'contact_email')}),
+        (_('Property Details'), {'fields': ('bedrooms', 'bathrooms', 'parking_spaces')}),
+    )
+
     
 admin.site.register(models.User, UserAdmin)
+admin.site.register(models.Property, PropertyAdmin)

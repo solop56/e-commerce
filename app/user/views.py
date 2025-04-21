@@ -103,7 +103,7 @@ class UserLogoutView(generics.GenericAPIView):
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserProfileView(generics.RetrieveUpdateAPIView):
+class UserProfileView(generics.ListAPIView):
     """Handle user profile retrieval and update.
     
     This view allows authenticated users to view and update their profile information.
@@ -111,6 +111,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
+    queryset = User.objects.all()
     
     def get_object(self):
         """Get the current user object."""
@@ -153,7 +154,6 @@ class UserProfileUpdateView(generics.UpdateAPIView):
         self.perform_update(serializer)
         
         return Response(serializer.data)
-        return f'{self.first_name} {self.last_name}'
     
     def __str__(self):
         """Return the string representation of the user."""
