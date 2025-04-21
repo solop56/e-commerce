@@ -3,6 +3,9 @@ URL mapping for the user API.
 """
 from typing import List
 from django.urls import path, URLPattern
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+)
 
 from user import views
 
@@ -18,4 +21,7 @@ urlpatterns: List[URLPattern] = [
     path('profile/', views.UserProfileView.as_view(), name='profile'),
     path('profile/update/', views.UserProfileUpdateView.as_view(), name='profile_update'),
     path('list/', views.UserListView.as_view(), name='user_list'),
+
+    # Token authentication URLs
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

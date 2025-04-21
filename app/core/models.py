@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.core.validators import MinLengthValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
@@ -78,3 +79,24 @@ class Property(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class Wishlist(models.Model):
+    """Model for wishlist."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s wishlist"
+    
+class Contact(models.Model):
+    """Model for contact form."""
+    name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=254)
+    message = models.TextField()
+
+    def __str__(self):
+        return f"Contact from {self.name}"
+    
