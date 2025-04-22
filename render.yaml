@@ -10,23 +10,23 @@ services:
         value: 3.11.0
       - key: DB_HOST
         fromDatabase:
-          name: ecommerce_db
+          name: bebel_space_api
           property: host
       - key: DB_NAME
         fromDatabase:
-          name: ecommerce_db
+          name: bebel_space_api
           property: database
       - key: DB_USER
         fromDatabase:
-          name: ecommerce_db
+          name: bebel_space_api
           property: user
       - key: DB_PASS
         fromDatabase:
-          name: ecommerce_db
+          name: bebel_space_api
           property: password
       - key: DB_PORT
         fromDatabase:
-          name: ecommerce_db
+          name: bebel_space_api
           property: port
       - key: SECRET_KEY
         generateValue: true
