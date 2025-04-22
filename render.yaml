@@ -10,33 +10,33 @@ services:
         value: 3.11.0
       - key: DB_HOST
         fromDatabase:
-          name: ecommerce_db
+          name: bebel_space_api
           property: host
       - key: DB_NAME
         fromDatabase:
-          name: ecommerce_db
+          name: bebel_space_api
           property: database
       - key: DB_USER
         fromDatabase:
-          name: ecommerce_db
+          name: bebel_space_api
           property: user
       - key: DB_PASS
         fromDatabase:
-          name: ecommerce_db
+          name: bebel_space_api
           property: password
       - key: DB_PORT
         fromDatabase:
-          name: ecommerce_db
+          name: bebel_space_api
           property: port
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
         value: false
       - key: ALLOWED_HOSTS
-        value: "*"
+        value: "https://e-commerce-zy6i.onrender.com"
 
 databases:
   - name: bebel_space_api
     databaseName: ecommerce_db
     user: ecommerce_user
-    plan: free 
+    plan: free
