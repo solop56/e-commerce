@@ -2,12 +2,12 @@
 Serializers for the property app.
 """
 from rest_framework import serializers
-from core.models import Property, Wishlist
+from core.models import Rent, Wishlist, Contact
 
 class PropertySerializer(serializers.ModelSerializer):
     """Serializer for the property object."""
     class Meta:
-        model = Property
+        model = Rent
         fields = '__all__'
         read_only_fields = ('id','created_at', 'updated_at')
         extra_kwargs = {
@@ -27,7 +27,7 @@ class PropertySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create a new property."""
-        return Property.objects.create(**validated_data)
+        return Rent.objects.create(**validated_data)
     
     def update(self, instance, validated_data):
         """Update a property"""
@@ -56,7 +56,57 @@ class WishListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
         fields = ['id', 'property']
-        read_only_fields = ('id')
+        read_only_fields = ('id',)
         extra_kwargs = {
             'property': {'required': True},
         }
+    
+
+class ContactSerializer(serializers.ModelSerializer):
+    contact_number = serializers.SerializerMethodField()
+    contact_email = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Contact
+        fields = ['rent', 'contact_number', 'contact_email', 'message']
+        read_only_fields = ['contact_number', 'contact_email']
+        extra_kwargs = {
+            'rent': {'required': True},
+            'message': {'required': True},
+        }
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        try:
+            rent = instance.rent
+            representation['contact_number'] = rent.contact_number if rent else None
+            representation['contact_email'] = rent.contact_email if rent else None
+        except Exception as e:
+            print(f"[to_representation error] {e}")
+            representation['contact_number'] = None
+            representation['contact_email'] = None
+        return representation
+
+    def get_contact_number(self, obj):
+        try:
+            return obj.rent.contact_number if obj.rent else None
+        except Exception as e:
+            print(f"[get_contact_number error] {e}")
+            return None
+
+    def get_contact_email(self, obj):
+        try:
+            return obj.rent.contact_email if obj.rent else None
+        except Exception as e:
+            print(f"[get_contact_email error] {e}")
+            return None
+
+    def create(self, validated_data):
+        print("validated_data in create:", validated_data)
+        return Contact.objects.create(**validated_data)
+
+    
+class ContactDetailSerializer(serializers.ModelSerializer):
+    """Serializer for the contact detail view."""
+    class Meta(ContactSerializer.Meta):
+        fields = ContactSerializer.Meta.fields

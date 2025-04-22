@@ -25,4 +25,9 @@ urlpatterns: List[URLPattern] = [
     #path('wishlist/<int:pk>/update/', views.WishlistViewSet.as_view({'put': 'update'}), name='wishlist_update'),
     path('wishlist/<int:pk>/detail/', views.WishlistViewSet.as_view({'get': 'retrieve'}), name='wishlist_detail'),
 
+    #Contact URLs
+    path('message/', views.ContactViewSet.as_view({'post': 'create'}), name='message_create' ),
+    path('contact/', views.ContactDetailViewSet.as_view({'get': 'list'}), name='contact_detail'),
+
+
 ]

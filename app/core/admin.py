@@ -51,6 +51,17 @@ class PropertyAdmin(admin.ModelAdmin):
         (_('Property Details'), {'fields': ('bedrooms', 'bathrooms', 'parking_spaces')}),
     )
 
+class MessageAdmin(admin.ModelAdmin):
+    """Define the admin pages for messages."""
+    list_display = ['name', 'email', 'message', 'created_at']
+    search_fields = ['name', 'email']
+    ordering = ['-created_at']
+    list_per_page = 20
+    fieldsets = (
+        (None, {'fields': ('name', 'email', 'message')}),
+        (_('Contact Info'), {'fields': ('phone_number',)}),
+    )
     
 admin.site.register(models.User, UserAdmin)
-admin.site.register(models.Property, PropertyAdmin)
+admin.site.register(models.Rent, PropertyAdmin)
+admin.site.register(models.Contact)
