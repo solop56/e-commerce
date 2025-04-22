@@ -1,56 +1,31 @@
-# Use Python 3.12 Alpine as base image for smaller size
 FROM python:3.12-alpine
-
-# Add metadata
 LABEL maintainer="solopdev.com"
-LABEL description="Development and testing environment for Python applications"
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PATH="/py/bin:$PATH" \
-    PYTHONPATH="/app"
+ENV PYTHONUNBUFFERED=1
+ENV PATH="/py/bin:$PATH"
 
-# Install system dependencies and cleanup in one layer
-RUN apk add --update --no-cache \
-    postgresql-client \
-    curl \
-    git \
-    && rm -rf /var/cache/apk/*
+COPY ./requirements.txt /tmp/requirements.txt
+COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 
-# Install build dependencies and cleanup in one layer
-RUN apk add --update --no-cache --virtual .build-deps \
-    build-base \
-    postgresql-dev \
-    musl-dev \
-    python3-dev \
-    && rm -rf /var/cache/apk/*
 
-# Create and activate virtual environment
+ARG DEV=false
 RUN python -m venv /py && \
-    /py/bin/pip install --upgrade pip setuptools wheel
+    /py/bin/pip install --upgrade pip && \
+    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache --virtual .tmp-build-deps \
+        build-base postgresql-dev musl-dev && \
+    /py/bin/pip install -r /tmp/requirements.txt && \
+    if [ "$DEV" = "true" ]; \
+        then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
+        fi && \
+    rm -rf /tmp && \
+    apk del .tmp-build-deps 
 
-# Copy requirements files
-COPY requirements.txt requirements.dev.txt /tmp/
-
-# Install Python dependencies
-RUN /py/bin/pip install -r /tmp/requirements.txt && \
-    /py/bin/pip install -r /tmp/requirements.dev.txt && \
-    rm -rf /tmp/*
-
-# Create non-root user
-RUN adduser --disabled-password --no-create-home --gecos "" user && \
-    chown -R user:user /py
-
-# Set working directory
+COPY ./app /app
 WORKDIR /app
 
-# Copy application code
-COPY --chown=user:user ./app /app
-
-# Switch to non-root user
-USER user
-
-# Expose port
 EXPOSE 8000
 
+RUN adduser --disabled-password --no-create-home user
+
+USER user
