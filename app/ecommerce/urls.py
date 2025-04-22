@@ -1,5 +1,5 @@
 """
-URL configuration for app project.
+URL configuration for ecommerce project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
@@ -28,11 +28,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
      # API Documentation
-    path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path(
         'api/docs/',
-        SpectacularSwaggerView.as_view(url_name='api-schema'),
-        name='api-docs',
+        SpectacularSwaggerView.as_view(url_name='schema'),
+        name='swagger-ui',
     ),
     # API Endpoints
     path('api/user/', include('user.urls', namespace='user')),
