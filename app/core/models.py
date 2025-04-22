@@ -59,7 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
-class Property(models.Model):
+class Rent(models.Model):
     """Model for properties."""
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -85,7 +85,7 @@ class Wishlist(models.Model):
     """Model for wishlist."""
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                               on_delete=models.CASCADE)
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    property = models.ForeignKey(Rent, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -93,10 +93,17 @@ class Wishlist(models.Model):
     
 class Contact(models.Model):
     """Model for contact form."""
-    name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=254)
-    message = models.TextField()
+    rent = models.ForeignKey(Rent, on_delete=models.CASCADE, null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
+    
 
     def __str__(self):
-        return f"Contact from {self.name}"
+        return f"Contact for {self.property.name}"
     
+    @property
+    def contact_info(self):
+        """Return the contact information for the property."""
+        return {
+            'contact_number': self.property.contact_number,
+            'contact_email': self.property.contact_email
+        }

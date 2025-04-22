@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: bebel_space_api
+    env: python
+    plan: free
+    buildCommand: cd app && pip install -r ../requirements.txt
+    startCommand: cd app && python manage.py migrate && gunicorn app.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DB_HOST
+        fromDatabase:
+          name: ecommerce_db
+          property: host
+      - key: DB_NAME
+        fromDatabase:
+          name: ecommerce_db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: ecommerce_db
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: ecommerce_db
+          property: password
+      - key: DB_PORT
+        fromDatabase:
+          name: ecommerce_db
+          property: port
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: "*"
+
+databases:
+  - name: bebel_space_api
+    databaseName: ecommerce_db
+    user: ecommerce_user
+    plan: free 
