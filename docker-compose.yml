@@ -4,7 +4,7 @@ services:
       context: .
       args:
         - DEV=true
-    container_name: todo-app-api
+    container_name: bebel_space_api
     restart: unless-stopped
     ports:
       - "8000:8000"
