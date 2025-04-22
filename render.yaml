@@ -1,32 +1,32 @@
 services:
   - type: web
-    name: bebel_space_api
+    name: bebel_api
     env: python
     plan: free
-    buildCommand:  pip install -r ../requirements.txt
-    startCommand:  python manage.py migrate && gunicorn app.wsgi:application
+    buildCommand: cd app && pip install -r ../requirements.txt
+    startCommand: cd app && python manage.py migrate && gunicorn ecommerce.wsgi:application
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
       - key: DB_HOST
         fromDatabase:
-          name: bebel_space_api
+          name:  bebel_api
           property: host
       - key: DB_NAME
         fromDatabase:
-          name: bebel_space_api
+          name:  bebel_api
           property: database
       - key: DB_USER
         fromDatabase:
-          name: bebel_space_api
+          name:  bebel_api
           property: user
       - key: DB_PASS
         fromDatabase:
-          name: bebel_space_api
+          name:  bebel_api
           property: password
       - key: DB_PORT
         fromDatabase:
-          name: bebel_space_api
+          name:  bebel_api
           property: port
       - key: SECRET_KEY
         generateValue: true
@@ -36,7 +36,7 @@ services:
         value: "https://e-commerce-zy6i.onrender.com"
 
 databases:
-  - name: bebel_space_api
-    databaseName: ecommerce_db
-    user: ecommerce_user
+  - name: bebel_api
+    databaseName: bebel_db
+    user: bebel_user
     plan: free
