@@ -39,4 +39,4 @@ databases:
   - name: bebel_space_api
     databaseName: ecommerce_db
     user: ecommerce_user
-    plan: free 
+    plan: free
