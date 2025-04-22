@@ -1,39 +1,33 @@
+# Exported from Render on 2025-04-22T20:53:49Z
+version: "1"
 services:
   - type: web
     name: bebel_api
-    env: python
+    runtime: python
+    repo: https://github.com/solop56/e-commerce.git
     plan: free
+    region: oregon
     buildCommand: cd app && pip install -r ../requirements.txt
     startCommand: cd app && python manage.py migrate && gunicorn ecommerce.wsgi:application
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        sync: false
       - key: DB_HOST
-        fromDatabase:
-          name:  bebel_api
-          property: host
+        sync: false
       - key: DB_NAME
-        fromDatabase:
-          name:  bebel_api
-          property: database
+        sync: false
       - key: DB_USER
-        fromDatabase:
-          name:  bebel_api
-          property: user
+        sync: false
       - key: DB_PASS
-        fromDatabase:
-          name:  bebel_api
-          property: password
+        sync: false
       - key: DB_PORT
-        fromDatabase:
-          name:  bebel_api
-          property: port
+        sync: false
       - key: SECRET_KEY
-        generateValue: true
+        sync: false
       - key: DEBUG
-        value: false
+        sync: false
       - key: ALLOWED_HOSTS
-        value: "https://e-commerce-zy6i.onrender.com"
+        sync: false
 
 databases:
   - name: bebel_api
