@@ -3,8 +3,8 @@ services:
     name: bebel_space_api
     env: python
     plan: free
-    buildCommand: cd app && pip install -r ../requirements.txt
-    startCommand: cd app && python manage.py migrate && gunicorn app.wsgi:application
+    buildCommand:  pip install -r ../requirements.txt
+    startCommand:  python manage.py migrate && gunicorn app.wsgi:application
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
