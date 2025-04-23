@@ -24,8 +24,10 @@ RUN python -m venv /py && \
 COPY ./app /app
 WORKDIR /app
 
-EXPOSE 8000
+EXPOSE 8080
 
 RUN adduser --disabled-password --no-create-home user
 
 USER user
+
+CMD ["/py/bin/python", "manage.py", "runserver", "0.0.0.0:8000"]
