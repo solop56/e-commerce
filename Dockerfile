@@ -24,7 +24,7 @@ RUN python -m venv /py && \
 COPY ./app /app
 WORKDIR /app
 
-EXPOSE 8080
+EXPOSE 8000
 
 RUN adduser --disabled-password --no-create-home user
 
