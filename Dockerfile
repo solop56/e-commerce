@@ -30,4 +30,4 @@ RUN adduser --disabled-password --no-create-home user
 
 USER user
 
-CMD ["gunicorn", "ecommerce.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "ecommerce.ecommerce.wsgi:application", "--bind", "0.0.0.0:8000"]
