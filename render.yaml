@@ -11,23 +11,33 @@ services:
     startCommand: cd app && python manage.py migrate && gunicorn ecommerce.wsgi:application
     envVars:
       - key: PYTHON_VERSION
-        sync: false
+        value: "3.12.0"
       - key: DB_HOST
-        sync: false
+        fromDatabase:
+          name: bebel_api
+          property: host
       - key: DB_NAME
-        sync: false
+        fromDatabase:
+          name: bebel_api
+          property: database
       - key: DB_USER
-        sync: false
+        fromDatabase:
+          name: bebel_api
+          property: user
       - key: DB_PASS
-        sync: false
+        fromDatabase:
+          name: bebel_api
+          property: password
       - key: DB_PORT
-        sync: false
+        fromDatabase:
+          name: bebel_api
+          property: port
       - key: SECRET_KEY
-        sync: false
+        generate: true
       - key: DEBUG
         sync: false
       - key: ALLOWED_HOSTS
-        sync: false
+        value: "e-commerce-zy6i.onrender.com"
 
 databases:
   - name: bebel_api
