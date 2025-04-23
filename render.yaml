@@ -7,8 +7,8 @@ services:
     repo: https://github.com/solop56/e-commerce.git
     plan: free
     region: oregon
-    buildCommand: cd app && pip install -r ../requirements.txt 
-    startCommand: python manage.py migrate && gunicorn ecommerce.wsgi:application --bind 0.0.0:8000
+    buildCommand: cd app && pip install -r ../requirements.txt && python manage.py migrate
+    startCommand: gunicorn ecommerce.wsgi:application --bind 0.0.0:8000
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.0"
