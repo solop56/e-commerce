@@ -1,16 +1,17 @@
 """
-Serializers for the User api.
+Serializer for Admin Page
 """
 from django.contrib.auth import authenticate, get_user_model
-from django .contrib.auth.password_validation import validate_password
+from django.contrib.auth.password_validation import validate_password
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+User = get_user_model()
 
-class UserSerializer(serializers.ModelSerializer):
-    """Serializer for the user object."""
+class AdminUserSerializer(serializers.ModelSerializer):
+    """Serializer for the admin user object."""
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -24,19 +25,16 @@ class UserSerializer(serializers.ModelSerializer):
         style={'input_type': 'password'}
     )
 
-
     class Meta:
-        model = get_user_model()
+        model = User
         fields = ('id', 'email', 'username', 'first_name', 'last_name', 'password', 'confirm_password')
         read_only_fields = ('id',)
         extra_kwargs = {
             'email': {'required': True},
             'username': {'required': True},
             'first_name': {'required': True},
-            'last_name': {'required': True},
+            'last_name': {'required': True},    
         }
-
-
     def validate(self, attrs):
         """Validate the user data."""
         if attrs.get('password') != attrs.get('confirm_password'):
@@ -46,14 +44,22 @@ class UserSerializer(serializers.ModelSerializer):
             )
         return attrs
     
-    def create(self, validated_data):
-        """Create a new user with encrypted password."""
+    def create(self,validated_data):
+        """Create a new admin User"""
         validated_data.pop('confirm_password', None)
-        user = get_user_model().objects.create_user(**validated_data)
+        user = User.objects.create_user(
+                email=validated_data['email'],
+                username=validated_data['username'],
+                password=validated_data['password'],
+                first_name=validated_data['first_name'],
+                last_name=validated_data['last_name']
+            )
+        user.is_staff = True
+        user.is_superuser = True
 
         # Clear any cached user data
         cache.delete(f'user_{user.id}')
-
+        
         return user
     
     def update(self, instance, validated_data):
@@ -61,17 +67,17 @@ class UserSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password', None)
         if password:
             instance.set_password(password)
-
+        
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         
+        instance.save()
+        
         # Clear any cached user data
         cache.delete(f'user_{instance.id}')
-
-        instance.save()
+        
         return instance
-
-
+    
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for user authentication."""
     email = serializers.EmailField()
@@ -106,7 +112,14 @@ class AuthTokenSerializer(serializers.Serializer):
                 code='authorization'
             )
         attrs['user'] = user
+
+        if not user.is_staff:
+            raise serializers.ValidationError(
+                {'detail': _('User is not an admin.')},
+                code='authorization'
+            )
         return attrs
+    
     
 
     def save(self, **kwargs):
@@ -120,7 +133,7 @@ class AuthTokenSerializer(serializers.Serializer):
         data = super().to_representation(instance)
         user = instance.get('user')
         if user:
-            data['user'] = UserSerializer(user).data
+            data['user'] = AdminUserSerializer(user).data
         return data
     
     def __str__(self):

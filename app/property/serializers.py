@@ -69,7 +69,7 @@ class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
         fields = ['rent', 'contact_number', 'contact_email', 'message']
-        read_only_fields = ['contact_number', 'contact_email']
+        read_only_fields = ['contact_number', 'contact_email', 'created_at']
         extra_kwargs = {
             'rent': {'required': True},
             'message': {'required': True},

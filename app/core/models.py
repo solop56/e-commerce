@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinLengthValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.utils.timezone import now
 
 
 class UserManager(BaseUserManager):
@@ -95,6 +96,7 @@ class Contact(models.Model):
     """Model for contact form."""
     rent = models.ForeignKey(Rent, on_delete=models.CASCADE, null=True, blank=True)
     message = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
 
     def __str__(self):

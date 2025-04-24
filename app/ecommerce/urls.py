@@ -37,4 +37,5 @@ urlpatterns = [
     # API Endpoints
     path('api/user/', include('user.urls', namespace='user')),
     path('api/property/', include('property.urls', namespace='property')),
+    path('api/property-admin/', include('property_admin.urls', namespace='property_admin')),
 ]
