@@ -37,6 +37,8 @@ class UserAdmin(BaseUserAdmin):
     ordering = ['email']
     filter_horizontal = []
     list_per_page = 20
+
+
     
 class PropertyAdmin(admin.ModelAdmin):
     """Define the admin pages for properties."""
@@ -53,7 +55,7 @@ class PropertyAdmin(admin.ModelAdmin):
 
 class MessageAdmin(admin.ModelAdmin):
     """Define the admin pages for messages."""
-    list_display = ['name', 'email', 'message', 'created_at']
+    list_display = ['rent', 'message', 'created_at']
     search_fields = ['name', 'email']
     ordering = ['-created_at']
     list_per_page = 20
@@ -64,4 +66,4 @@ class MessageAdmin(admin.ModelAdmin):
     
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Rent, PropertyAdmin)
-admin.site.register(models.Contact)
+admin.site.register(models.Contact, MessageAdmin)

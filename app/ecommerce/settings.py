@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     'core',
     'user',
     'property',
+    'property_admin',
     'corsheaders',
 ]
 
