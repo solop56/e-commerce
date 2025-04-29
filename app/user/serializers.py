@@ -1,6 +1,7 @@
 """
 Serializers for the User api.
 """
+from drf_spectacular.utils import extend_schema_serializer
 from django.contrib.auth import authenticate, get_user_model
 from django .contrib.auth.password_validation import validate_password
 from django.core.cache import cache
@@ -27,13 +28,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email', 'username', 'first_name', 'last_name', 'password', 'confirm_password')
+        fields = ('id', 'email', 'username', 'first_name', 'last_name', 'password', 'confirm_password', 'phone_number')
         read_only_fields = ('id',)
         extra_kwargs = {
             'email': {'required': True},
             'username': {'required': True},
             'first_name': {'required': True},
             'last_name': {'required': True},
+            'phone_number': {'required': True},
         }
 
 
@@ -71,7 +73,7 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-
+@extend_schema_serializer(component_name="UserAuthToken")
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for user authentication."""
     email = serializers.EmailField()
@@ -128,6 +130,7 @@ class AuthTokenSerializer(serializers.Serializer):
         return self.full_name
     
 
+@extend_schema_serializer(component_name="UserLogOut")
 class LogOutSerializer(serializers.Serializer):
     """Serializer for user logout."""
     refresh = serializers.CharField(

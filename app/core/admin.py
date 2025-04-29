@@ -42,9 +42,9 @@ class UserAdmin(BaseUserAdmin):
     
 class PropertyAdmin(admin.ModelAdmin):
     """Define the admin pages for properties."""
-    list_display = ['name', 'price', 'owner', 'type', 'category']
+    list_display = ['name', 'price', 'owner', 'property_type', 'category']
     search_fields = ['name', 'owner__username']
-    list_filter = ['type', 'category']
+    list_filter = ['property_type', 'category']
     ordering = ['-created_at']
     list_per_page = 20
     fieldsets = (
