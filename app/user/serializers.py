@@ -41,7 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         """Validate the user data."""
-        if attrs.get('password') != attrs.get('confirm_password'):
+        if attrs.get['password'] != attrs.get['confirm_password']:
             raise serializers.ValidationError(
                 {'password': _('Passwords do not match.')},
                 code='password_mismatch'
