@@ -1,6 +1,7 @@
 """"
 Serializers for the property app.
 """
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from core.models import Rent, Wishlist, Contact
 
@@ -87,6 +88,7 @@ class ContactSerializer(serializers.ModelSerializer):
             representation['contact_email'] = None
         return representation
 
+    @extend_schema_field(serializers.CharField)
     def get_contact_number(self, obj):
         try:
             return obj.rent.contact_number if obj.rent else None
@@ -94,6 +96,7 @@ class ContactSerializer(serializers.ModelSerializer):
             print(f"[get_contact_number error] {e}")
             return None
 
+    @extend_schema_field(serializers.CharField)
     def get_contact_email(self, obj):
         try:
             return obj.rent.contact_email if obj.rent else None

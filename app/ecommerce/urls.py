@@ -16,6 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
+
 
 # Third-party imports
 from drf_spectacular.views import (
@@ -39,3 +42,9 @@ urlpatterns = [
     path('api/property/', include('property.urls', namespace='property')),
     path('api/property-admin/', include('property_admin.urls', namespace='property_admin')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT,
+    )
