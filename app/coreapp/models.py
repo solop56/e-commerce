@@ -1,10 +1,16 @@
+import uuid
+import os
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinLengthValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 
-
+def upload_property_image(instance, filename):
+    """Generate file path for new property image."""
+    ext = os.path.splitext(filename)[1]
+    filename = f'property_{uuid.uuid4()}{ext}'
+    return os.path.join('uploads', 'property', filename)
 
 class UserManager(BaseUserManager):
     """Manager for user profiles."""
@@ -23,6 +29,8 @@ class UserManager(BaseUserManager):
         """Create and return a superuser."""
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_admin_user', True)
+        
         return self.create_user(email, username, password, **extra_fields)
 
 
@@ -36,6 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_admin_user = models.BooleanField(default=False)
 
     groups = models.ManyToManyField(
         'auth.Group',
@@ -80,6 +89,7 @@ class Rent(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    image = models.ImageField(upload_to=upload_property_image, null=True, blank=True)
 
     def __str__(self):
         return self.name

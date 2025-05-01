@@ -3,7 +3,7 @@ Serializers for the property app.
 """
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from core.models import Rent, Wishlist, Contact
+from coreapp.models import Rent, Wishlist, Contact
 
 class PropertySerializer(serializers.ModelSerializer):
     """Serializer for the property object."""

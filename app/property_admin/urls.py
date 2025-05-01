@@ -18,5 +18,7 @@ urlpatterns: List[URLPattern] = [
     path('token/refresh/', TokenRefreshView.as_view(), name='admin_token_refresh'),
     path('stats/', views.AdminListView.as_view(), name='list_of_users'),
     path('user/', views.AdminListView.as_view(), name='admin_user_detail'),
+    path('stats/', views.AdminListView.as_view(), name='list_of_users'),
+    path('user/', views.AdminListView.as_view(), name='admin_user_detail'),
     path('users/<str:pk>/', views.BanUserView.as_view(), name='ban_user'),
     ]

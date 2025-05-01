@@ -12,7 +12,7 @@ from rest_framework.throttling import UserRateThrottle
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 
-from core.models import User
+from coreapp.models import User
 from property_admin.serializers import AdminUserSerializer, AuthTokenSerializer, LogOutSerializer
 
 
@@ -97,9 +97,12 @@ class AdminListView(generics.ListAPIView):
     """List all admin users."""
     queryset = User.objects.all()
     serializer_class = AdminUserSerializer
-    permission_classes = [IsAdminUser]
-    authentication_classes = [JWTAuthentication]
     
+    def get(self, request, *args, **kwargs):
+        if request.path.endswith('/stats/'):
+            return self.get_admin_stats(request)
+        return self.list(request) 
+
     def get_admin_stats(self, request):
         """Get admin Stat and all user"""
         total_users = User.objects.count()

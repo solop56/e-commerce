@@ -56,6 +56,8 @@ class AdminUserSerializer(serializers.ModelSerializer):
             )
         user.is_staff = True
         user.is_superuser = True
+        user.is_admin_user = True
+        user.save()
 
         # Clear any cached user data
         cache.delete(f'user_{user.id}')
@@ -113,7 +115,7 @@ class AuthTokenSerializer(serializers.Serializer):
             )
         attrs['user'] = user
 
-        if not user.is_staff:
+        if not user.is_admin_user:
             raise serializers.ValidationError(
                 {'detail': _('User is not an admin.')},
                 code='authorization'
@@ -135,10 +137,6 @@ class AuthTokenSerializer(serializers.Serializer):
         if user:
             data['user'] = AdminUserSerializer(user).data
         return data
-    
-    def __str__(self):
-        """Return the string representation of the user."""
-        return self.full_name
     
 
 class LogOutSerializer(serializers.Serializer):
