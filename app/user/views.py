@@ -17,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.throttling import UserRateThrottle
 from rest_framework import serializers
 
-from core.models import User
+from coreapp.models import User
 from user.serializers import UserSerializer, AuthTokenSerializer, LogOutSerializer
 
 

@@ -9,7 +9,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from django.core.mail import send_mail
 from django.utils.translation import gettext_lazy as _
 
-from core.models import Rent, Wishlist, Contact
+from coreapp.models import Rent, Wishlist, Contact
 from property import  serializers
 
 
