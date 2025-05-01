@@ -55,6 +55,8 @@ class UserSerializer(serializers.ModelSerializer):
 
         # Clear any cached user data
         cache.delete(f'user_{user.id}')
+        
+        user.save()
 
         return user
     
