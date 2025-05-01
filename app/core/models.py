@@ -1,10 +1,16 @@
+import uuid
+import os
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinLengthValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 
-
+def upload_property_image(instance, filename):
+    """Generate file path for new property image."""
+    ext = os.path.splitext(filename)[1]
+    filename = f'property_{uuid.uuid4()}{ext}'
+    return os.path.join('uploads', 'property', filename)
 
 class UserManager(BaseUserManager):
     """Manager for user profiles."""
@@ -80,6 +86,7 @@ class Rent(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    image = models.ImageField(upload_to=upload_property_image, null=True, blank=True)
 
     def __str__(self):
         return self.name
