@@ -3,7 +3,7 @@ Serializers for the User api.
 """
 from drf_spectacular.utils import extend_schema_serializer
 from django.contrib.auth import authenticate, get_user_model
-from django .contrib.auth.password_validation import validate_password
+from django.contrib.auth.password_validation import validate_password
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 

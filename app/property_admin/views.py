@@ -114,7 +114,9 @@ class AdminListView(generics.ListAPIView):
     
     def list(self, request):
         """Get all users and admin details"""
-        user = self.get_queryset()
+        user = self.get_queryset().filter(is_staff=True)
+        if not user:
+            return Response({'detail': 'No users found'}, status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(user, many=True)
         return Response(serializer.data)
     
