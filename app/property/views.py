@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 from coreapp.models import Rent, Wishlist, Contact
 from property import  serializers
+from .permissions import PropertyOwnerPermission
 
 
 class PropertyViewSet(mixins.DestroyModelMixin,
@@ -20,7 +21,7 @@ class PropertyViewSet(mixins.DestroyModelMixin,
     """ Views set to create, update and destroy properties"""
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminUser]
+    permission_classes = [PropertyOwnerPermission]
     serializer_class = serializers.PropertyDetailSerializer
     queryset = Rent.objects.all()
 
@@ -33,6 +34,19 @@ class PropertyViewSet(mixins.DestroyModelMixin,
     def perform_update(self, serializer):
         """Update a property."""
         serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(methods=['POST'], detail=True, url_path='upload-image')
+    def upload_image(self, request, pk=None):
+        """Upload an image for a property."""
+        property = self.get_object()
+        image = request.FILES.get('image')
+        if not image:
+            return Response({"detail": "No image provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        property.image = image
+        property.save()
+        serializer = self.get_serializer(property)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 

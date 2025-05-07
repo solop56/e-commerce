@@ -113,3 +113,17 @@ class ContactDetailSerializer(serializers.ModelSerializer):
     """Serializer for the contact detail view."""
     class Meta(ContactSerializer.Meta):
         fields = ContactSerializer.Meta.fields
+
+
+class  RecipeImageSerializer(serializers.ModelSerializer):
+    """Serializer for uploading image for property."""
+    class Meta:
+        model = Rent
+        fields = ['id', 'image']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'image': {'required': True},
+        }
+    
+
+    
