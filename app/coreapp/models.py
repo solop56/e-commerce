@@ -113,7 +113,7 @@ class Contact(models.Model):
     
 
     def __str__(self):
-        return f"Contact for {self.rent.name}"if self.rent else "General Contact"
+        return self.message 
     
     def contact_info(self):
         """Return the contact information for the property."""

@@ -53,7 +53,7 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
 
 class WishListSerializer(serializers.ModelSerializer):
     """Serializer for the wishlsit object."""
-    property = PropertySerializer
+    property = PropertySerializer(read_only=True, required=False)
     class Meta:
         model = Wishlist
         fields = ['id', 'property']
@@ -69,11 +69,11 @@ class ContactSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contact
-        fields = ['rent', 'contact_number', 'contact_email', 'message']
+        fields = ['rent', 'contact_number', 'contact_email','created_at', 'message']
         read_only_fields = ['contact_number', 'contact_email', 'created_at']
         extra_kwargs = {
             'rent': {'required': True},
-            'message': {'required': True},
+            'created_at': {'required': False},
         }
 
     def to_representation(self, instance):

@@ -5,13 +5,17 @@ from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
-from django.core.mail import send_mail
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 from django.utils.translation import gettext_lazy as _
+import logging
 
 from coreapp.models import Rent, Wishlist, Contact
 from property import  serializers
 from .permissions import PropertyOwnerPermission
+
+logger = logging.getLogger(__name__)
 
 
 class PropertyViewSet(mixins.DestroyModelMixin,
@@ -28,12 +32,12 @@ class PropertyViewSet(mixins.DestroyModelMixin,
 
     def perform_create(self, serializer):
         """Create a new property."""
-        serializer.save()
+        serializer.save(owner=self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def perform_update(self, serializer):
         """Update a property."""
-        serializer.save()
+        serializer.save(owner=self.request.user)    
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     @action(methods=['POST'], detail=True, url_path='upload-image')
@@ -56,6 +60,11 @@ class PropertyListViewSet(mixins.ListModelMixin,
     """Views set to list and retrieve properties"""
     permission_classes = [AllowAny]
     serializer_class = serializers.PropertySerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['category', 'price', 'bedrooms', 'bathrooms', 'parking_spaces']
+    search_fields = ['name', 'description', 'location']
+    ordering_fields = ['price', 'created_at']
+    ordering = ['-created_at']
     queryset = Rent.objects.all()
 
     def get_queryset(self):
@@ -67,7 +76,7 @@ class PropertyListViewSet(mixins.ListModelMixin,
         property_id = self.request.query_params.get('id')
         if property_id:
             queryset = queryset.filter(id=property_id)
-        return queryset
+        return super().filter_queryset(queryset)
     
     @action(detail=False, methods=['get'])
     def search(self, request):
@@ -140,23 +149,15 @@ class ContactViewSet(mixins.CreateModelMixin,
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         contact = serializer.save()
-        contact_email = contact.rent.contact_email
 
-        # Send email notification
-        send_mail(
-        subject=_('New Contact Message'),
-        message=serializer.validated_data.get('message'),
-        from_email=None,  # Use default email settings
-        recipient_list=[contact_email],
-        fail_silently=False,
-    )
+        logger.info(f"Contact message created: {contact.rent.contact_email}")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 
 class ContactDetailViewSet(mixins.ListModelMixin,
                            viewsets.GenericViewSet):
     """ Viewset to handle contact form submissions"""
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
     serializer_class = serializers.ContactSerializer 
     queryset = Contact.objects.all()
 
