@@ -79,7 +79,7 @@ class UserLoginView(TokenObtainPairView):
                         )
                     raise e
                 
-        except Exception as e:
+        except Exception:
             # Log unexpected server errors
             logger.error("Unhandled error in login: %s", traceback.format_exc())
             return Response(
