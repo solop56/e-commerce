@@ -16,11 +16,14 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.throttling import UserRateThrottle
 from rest_framework import serializers
+import logging
+import traceback
 
 from coreapp.models import User
 from user.serializers import UserSerializer, AuthTokenSerializer, LogOutSerializer
 
 
+logger = logging.getLogger(__name__)
 class CreateUserView(generics.CreateAPIView):
     """Create a new user in the system.
     
@@ -54,7 +57,8 @@ class UserLoginView(TokenObtainPairView):
             
             # Get user data using UserSerializer
             user_data = UserSerializer(user).data
-            
+
+
             # Return tokens and user data
             return Response({
                 'refresh': str(refresh),
@@ -74,6 +78,14 @@ class UserLoginView(TokenObtainPairView):
                             status=status.HTTP_401_UNAUTHORIZED
                         )
                     raise e
+                
+        except Exception as e:
+            # Log unexpected server errors
+            logger.error("Unhandled error in login: %s", traceback.format_exc())
+            return Response(
+                {"error": "Something went wrong. Please try again."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
     
 class UserLogoutView(generics.GenericAPIView):
     """Handle user logout and token blacklisting.
