@@ -45,7 +45,7 @@ class CreateUserView(generics.CreateAPIView):
             }, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
+        except Exception:
             logger.error("Unhandled error in registration: %s", traceback.format_exc())
             return Response(
                 {"error": "Server error during registration"},
