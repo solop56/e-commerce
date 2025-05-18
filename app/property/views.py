@@ -9,6 +9,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 import logging
+from rest_framework.exceptions import ValidationError
+
 
 from coreapp.models import Rent, Wishlist, Contact
 from property import  serializers
@@ -30,28 +32,32 @@ class PropertyViewSet(mixins.DestroyModelMixin,
 
 
     def perform_create(self, serializer):
-        """Create a new property."""
-        serializer.save(owner=self.request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-    def perform_update(self, serializer):
-        """Update a property."""
-        serializer.save(owner=self.request.user)    
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    @action(methods=['POST'], detail=True, url_path='upload-image')
-    def upload_image(self, request, pk=None):
-        """Upload an image for a property."""
-        property = self.get_object()
-        image = request.FILES.get('image')
-        if not image:
-            return Response({"detail": "No image provided."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer.save(owner=self.request.user)
+        except Exception as e:
+            logger.error("Error in perform_create: %s", str(e), exc_info=True)
+            raise ValidationError({"error": str(e)})  # causes DRF to return a 400 error
 
-        property.image = image
-        property.save()
-        serializer = self.get_serializer(property)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+    def perform_update(self, serializer):
+        try:
+            serializer.save(owner=self.request.user)
+        except Exception as e:
+            logger.error("Error in perform_update: %s", str(e), exc_info=True)
+            raise ValidationError({"error": str(e)})
+        
+        @action(methods=['POST'], detail=True, url_path='upload-image')
+        def upload_image(self, request, pk=None):
+            """Upload an image for a property."""
+            property = self.get_object()
+            image = request.FILES.get('image')
+            if not image:
+                return Response({"detail": "No image provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+            property.image = image
+            property.save()
+            serializer = self.get_serializer(property)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
 
 class PropertyListViewSet(mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
