@@ -18,6 +18,7 @@ from rest_framework.throttling import UserRateThrottle
 from rest_framework import serializers
 import logging
 import traceback
+from rest_framework.exceptions import ValidationError
 
 from coreapp.models import User
 from user.serializers import UserSerializer, AuthTokenSerializer, LogOutSerializer
@@ -33,6 +34,23 @@ class CreateUserView(generics.CreateAPIView):
     """
     serializer_class = UserSerializer
     throttle_classes = [UserRateThrottle]
+    def post(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            user = serializer.save()
+            return Response({
+                "user": UserSerializer(user).data,
+                "message": "User registered successfully"
+            }, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            logger.error("Unhandled error in registration: %s", traceback.format_exc())
+            return Response(
+                {"error": "Server error during registration"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 class UserLoginView(TokenObtainPairView):
     """Handle user login and token generation.
