@@ -45,12 +45,13 @@ class CreateUserView(generics.CreateAPIView):
             }, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
-        except Exception:
+        except Exception as e:
             logger.error("Unhandled error in registration: %s", traceback.format_exc())
             return Response(
-                {"error": "Server error during registration"},
+                {"error": str(e)}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
 
 class UserLoginView(TokenObtainPairView):
     """Handle user login and token generation.
