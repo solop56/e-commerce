@@ -36,7 +36,7 @@ class PropertyViewSet(mixins.DestroyModelMixin,
             serializer.save(owner=self.request.user)
         except Exception as e:
             logger.error("Error in perform_create: %s", str(e), exc_info=True)
-            raise ValidationError({"error": str(e)})  # causes DRF to return a 400 error
+            raise ValidationError({"error": str(e)}) 
 
     def perform_update(self, serializer):
         try:
