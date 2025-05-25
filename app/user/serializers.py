@@ -53,7 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create a new user with encrypted password."""
         validated_data.pop('confirm_password', None)
-        user = get_user_model().objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
         user.save()
 
         # Clear any cached user data
